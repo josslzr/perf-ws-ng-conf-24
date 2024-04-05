@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { rxActions } from '@rx-angular/state/actions';
 import { exhaustMap, map, Observable, startWith, tap } from 'rxjs';
@@ -23,7 +23,8 @@ export class MovieListPageComponent {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private movieService: MovieService
+    private movieService: MovieService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.activatedRoute.params.subscribe(params => {
       if (params['category']) {
@@ -31,12 +32,14 @@ export class MovieListPageComponent {
           this.movieService.getMovieList(params['category'], page)
         ).subscribe(movies => {
           this.movies = movies;
+          this.cdRef.markForCheck();
         });
       } else {
         this.paginate(page =>
           this.movieService.getMoviesByGenre(params['id'], page)
         ).subscribe(movies => {
           this.movies = movies;
+          this.cdRef.markForCheck();
         });
       }
     });
