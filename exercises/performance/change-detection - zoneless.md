@@ -61,7 +61,7 @@ calling the `appRef.tick()` method.
 
 **1. Create a custom change detection scheduler**
 
-Create a new file with a class that extends from `ChangeDetectionScheduler`.
+Create a new file with a class that implements the `ChangeDetectionScheduler`.
 
 For convenience, alias the import, as it contains the `ɵ` symbol.
 
