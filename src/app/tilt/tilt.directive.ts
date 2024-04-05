@@ -1,8 +1,12 @@
-import { Directive, HostBinding, HostListener, Input } from '@angular/core';
+import { Directive, HostListener, Input, signal } from '@angular/core';
 
 @Directive({
   selector: '[tilt]',
   standalone: true,
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
+  host: {
+    '[style.transform]': 'rotation()',
+  },
 })
 export class TiltDirective {
   @Input('tilt') rotationDegree = 30;
@@ -10,20 +14,19 @@ export class TiltDirective {
   @HostListener('mouseenter', ['$event.pageX', '$event.target'])
   onMouseEnter(pageX: number, target: HTMLElement) {
     const pos = determineDirection(pageX, target);
-
-    this.rotation =
-      pos === 0
+    this.rotation.update(() => {
+      return pos === 0
         ? `rotate(${this.rotationDegree}deg)`
         : `rotate(-${this.rotationDegree}deg)`;
+    });
   }
 
   @HostListener('mouseleave')
   onMouseLeave() {
-    this.rotation = 'rotate(0deg)';
+    this.rotation.update(() => 'rotate(0deg)');
   }
 
-  @HostBinding('style.transform')
-  rotation = 'rotate(0deg)';
+  rotation = signal('rotate(0deg)');
 }
 
 /**
